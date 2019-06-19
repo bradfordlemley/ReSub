@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@stated-library/base": "^1.0.5",
+    "@stated-library/core": "^1.0.5",
     "@stated-library/react": "^1.0.5",
     "react": "16.8.6",
     "react-dom": "16.8.6",
