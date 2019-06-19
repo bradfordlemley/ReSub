@@ -1,20 +1,27 @@
-import {
-    AutoSubscribeStore,
-    autoSubscribe,
-    StoreBase,
-} from 'resub';
+import StatedLibBase from '@stated-library/base';
 
 interface Answer {
     answer: string;
     image: string;
 }
 
-@AutoSubscribeStore
-class GameStore extends StoreBase {
-    private _isLoading: boolean = false;
-    private _answer: string = '';
-    private _image: string = '';
-    private _error: string = '';
+interface State {
+    isLoading: boolean,
+    answer: string,
+    image: any,
+    error: string,
+}
+
+class GameStore extends StatedLibBase<State> {
+
+    constructor() {
+        super({
+            isLoading: false,
+            answer: '',
+            error: '',
+            image: '',
+        })
+    }
 
     /**
      * guess
@@ -30,51 +37,16 @@ class GameStore extends StoreBase {
     }
 
     /**
-     * getAnswer
-     * @return string
-     */
-    @autoSubscribe
-    public getAnswer(): string {
-        return this._answer;
-    }
-
-    /**
-     * getImage
-     * @return string
-     */
-    @autoSubscribe
-    public getImage(): string {
-        return this._image;
-    }
-
-    /**
-     * getError
-     * @return string
-     */
-    @autoSubscribe
-    public getError(): string {
-        return this._error;
-    }
-
-    /**
-     * isLoading
-     * @return boolean
-     */
-    @autoSubscribe
-    public isLoading(): boolean {
-        return this._isLoading;
-    }
-
-    /**
      * _guessStart
      * @return void
      */
     private _guessStart = () => {
-        this._isLoading = true;
-        this._answer = '';
-        this._error = '';
-        this._image = '';
-        this.trigger();
+        this.updateState({
+            isLoading: true,
+            answer: '',
+            error: '',
+            image: '',
+        }, "START_GUESS");
     }
 
     /**
@@ -83,11 +55,12 @@ class GameStore extends StoreBase {
      * @return void
      */
     private onSuccess = ({ answer, image }: Answer) => {
-        this._isLoading = false;
-        this._answer = answer;
-        this._image = image;
-        this._error = '';
-        this.trigger();
+        this.updateState({
+            isLoading: false,
+            answer: answer,
+            image: image,
+            error: '',
+        }, "LOAD_SUCCESS");
     }
 
     /**
@@ -96,9 +69,10 @@ class GameStore extends StoreBase {
      * @return void
      */
     private onError = ({ message }: Error) => {
-        this._isLoading = false;
-        this._error = message;
-        this.trigger();
+        this.updateState({
+            isLoading: false,
+            error: message,
+        }, "LOAD_ERROR");
     }
 }
 
